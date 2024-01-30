@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ManageUserController extends Controller
@@ -69,7 +70,7 @@ class ManageUserController extends Controller
                 'success' => false,
                 'message' => $e->getMessage(),
                 'data' => null,
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            ], 422);
         }
         
     }
@@ -166,6 +167,7 @@ class ManageUserController extends Controller
 
     // deleteUser => user/id
     public function deleteUser($id) {
+        
         DB::beginTransaction();
 
         try{
@@ -174,14 +176,16 @@ class ManageUserController extends Controller
             // condition
             if($finduser){
                 $finduser->delete();
-
+                
                 DB::commit();
+                
                 // Return a success response
                 return response()->json([
                     'success' => true,
                     'messages' => 'User berhasil dihapus!',
                     'data' => $finduser,
                 ], JsonResponse::HTTP_CREATED);
+
             } else {
                 DB::rollback();
                 return response()->json([
@@ -201,4 +205,6 @@ class ManageUserController extends Controller
         }
         
     }
+
+    
 }

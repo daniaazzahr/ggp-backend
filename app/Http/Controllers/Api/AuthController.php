@@ -32,6 +32,15 @@ class AuthController extends Controller
                 'kind' => 'nullable|in:admin,user', // new col. role as admin atau user
             ]);
 
+            if ($validator->fails()) {
+                // Validation failed, return validation errors
+                return response()->json([
+                    'success' => false,
+                    'messages' => $validator->errors(),
+                    'data' => null,
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
             // def value. kind = user
             $kind = $request->input('kind', 'user');
     
@@ -118,4 +127,7 @@ class AuthController extends Controller
             ]);
         }
     }
+
+    
+    
 }
