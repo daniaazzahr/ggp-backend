@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\KlinikHukumController;
+use App\Http\Controllers\Api\KonsultasiOnlineController;
 use App\Http\Controllers\Api\ManageUserController;
+use App\Models\KonsultasiOnline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,7 +45,7 @@ Route::group(['middleware' => ['auth.jwt']],function (){
 Route::get('/users', [ManageUserController::class, 'getUsers']);
 Route::get('/user/{id}', [ManageUserController::class, 'getUser']);
 Route::middleware(['auth:api'])->group(function () {
-    // Your CRUD routes go here
+
 
     Route::put('/user/{id}', [ManageUserController::class, 'editUser']);
     Route::delete('/user/{id}', [ManageUserController::class, 'deleteUser']);
@@ -54,9 +56,23 @@ Route::middleware(['auth:api'])->group(function () {
 Route::post('/clinic', [KlinikHukumController::class, 'createPertanyaan']);
 Route::group(['middleware' => 'auth:api'], function () {
 
-    Route::post('/clinic/{id}', [KlinikHukumController::class, 'jawabPertanyaan']);
+    Route::put('/clinic/{id}', [KlinikHukumController::class, 'jawabPertanyaan']);
     Route::delete('/clinic/{id}', [KlinikHukumController::class, 'deletePertanyaan']);
-    // Add more routes as needed
+    
 });    
 Route::get('/clinic/{id}', [KlinikHukumController::class, 'getPertanyaan']);
-Route::get('/clinics', [KlinikHukumController::class, 'getClinics']);
+Route::get('/clinics/{isAnswer}', [KlinikHukumController::class, 'getClinics']);
+
+
+// ======================== KONSULTASI ONLINE ===========================
+Route::post('consultation', [KonsultasiOnlineController::class, 'postConsultation']);
+Route::put('consultation/{id}', [KonsultasiOnlineController::class, 'updateConsultation']);
+Route::get('download/{id}', [KonsultasiOnlineController::class, 'downloadBuktiTransaksi']);
+Route::delete('consultation/{id}', [KonsultasiOnlineController::class, 'deleteConsultation']);
+Route::get('consultation/{id}', [KonsultasiOnlineController::class, 'getConsultation']);
+Route::get('consultations', [KonsultasiOnlineController::class, 'getConsultations']);
+
+
+
+
+

@@ -87,6 +87,11 @@ class ManageUserController extends Controller
 
             if($findUser){
                 DB::commit();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User ditemukan!',
+                    'data' => $findUser
+                ], JsonResponse::HTTP_OK);
             }else{
                 DB::rollback();
 
@@ -96,12 +101,6 @@ class ManageUserController extends Controller
                 'data' => null,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
             }
-           
-            return response()->json([
-                'success' => true,
-                'message' => 'User ditemukan!',
-                'data' => $findUser
-            ], JsonResponse::HTTP_OK);
 
         } catch (Exception $e) {
             DB::rollback();
@@ -131,9 +130,23 @@ class ManageUserController extends Controller
                 'pekerjaan' => 'nullable|string',
                 'password' => 'required|string',
             ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()
+                ], 422);
+            }
     
             // CARI user by id
             $cariuser = User::find($id);
+
+            if(!$cariuser){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User tidak ditemukan.'
+                ], 422);
+            }
             
             $cariuser->update([
                 'namaLengkap' => $request->input('namaLengkap'),

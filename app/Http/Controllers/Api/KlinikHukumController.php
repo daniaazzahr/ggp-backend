@@ -22,7 +22,8 @@ class KlinikHukumController extends Controller
             // Validator, kategori not required
             $validator = Validator::make($request->all(),[
                 'pertanyaan' => 'required|string',
-                'kategori' => 'nullable'
+                'kategori' => 'nullable',
+                'penulis' => 'required'
             ]);
 
             if($validator->fails()){
@@ -211,10 +212,10 @@ class KlinikHukumController extends Controller
         }
     }
 
-    // GET ALL PERTANYAAN (FILTER)
-    public function getClinics(Request $request){
+    // GET ALL PERTANYAAN (FILTER) - rev: isAnswer required
+    public function getClinics(Request $request, $isAnswer){
         // page, take, orderBy, order
-
+        
         try{
             // 1. ambil input dari httpreq
             $page = $request->query('page', 1);
@@ -226,20 +227,34 @@ class KlinikHukumController extends Controller
             // 2. initialize query
             $query = KlinikHukum::query();
 
+            
+            if($isAnswer == 'false'){
+                $query->where('isAnswer', false);
+            }
+
+            if($isAnswer == 'true'){
+                $query->where('isAnswer', true);
+            }
+        
+
             // 3. filter search - apapun input user
             if($search !== null){
                 $query->where('pertanyaan', 'like', '%' . $search . '%');
                 
             }
 
+            // 6. count query
+            $total = KlinikHukum::count();
+
             // 4. sort query
             $query->orderBy($orderBy, $order);
+
+            
 
             // 5. pagination
             $data = $query->skip(($page - 1) * $take)->take($take)->get();
 
-            // 6. count query
-            $total = KlinikHukum::count();
+           
 
             // 7. total pages
             $totalPages = ceil($total/$take);
