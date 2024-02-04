@@ -33,9 +33,9 @@ Route::middleware('auth:api')->get('/user', function(Request $request){
 });
 Route::post('/logout', [AuthController::class, 'logoutUser']);
 Route::group(['middleware' => ['auth.jwt']],function (){
-    // sign in gugel
-    Route::get('google', [GoogleController::class, 'redirectToGoogle']);
-    Route::get('google/callback', [GoogleController::class, 'handleCallback']);
+    // sign in gugel, ini harus pake middleware atau gausah, nanti liat hasilnya
+    Route::get('auth', [GoogleController::class, 'redirectToGoogle']);
+    Route::get('auth/callback', [GoogleController::class, 'handleCallback']);
 });
 
 

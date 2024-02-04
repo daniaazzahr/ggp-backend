@@ -21,62 +21,62 @@ class GoogleController extends Controller
 
     public function handleCallback(Request $request)
     {
-        try {
-            // Set guard 'api' sebelum otentikasi
-            Auth::setDefaultDriver('api');
+        // ikutin contoh dari alfi => airlangga
 
-            // get user data dari google
-            $user = Socialite::driver('google')->user();
+        // cek user udah login apa belum 
+        if (Auth::check()) {
+            return redirect('/login');
+        }
 
-            // cari user yg social_idnya sama kaya yg di provide google
-            $finduser = User::where('social_id', $user->id)->first();
+        // ambil user informasi dari google
+        $oauthUser = Socialite::driver('google')->user();
+        
+        // cek kalau ada user dengan id yang sama udah ada (registered
+        $user = User::where('google_id', $oauthUser->id)->first();
 
-            if ($finduser)  // ketika user id ketemu
-            {
-                // User found in the database, log in the user
-                // $token = JWTAuth::fromUser($finduser);
+        if ($user) {
+            // kalau google idnya ketemu, masuk
+            Auth::loginUsingId($user->id);
+            return redirect('/home');
+        } else {
+            // cek kalau user sign in pake email yg sama (udah register pake email a terus sign in google pake email a juga)
+            $registeredUser = User::where('email', $oauthUser->email)->first();
 
-                // login user
-                Auth::login($finduser);
+            // kind user
+            $kind = $request->input('kind', 'user');
 
-                // redirect user ke home page
+            if ($registeredUser) {
+                // kalau emailnya sama (yg registered dan dipake sign in)
+                // update google idnya (null->google_id after sign in)
+                $registeredUser->update(['google_id' => $oauthUser->id]);
+
+                // Login user
+                Auth::login($registeredUser);
                 return redirect('/home');
-            }
-            else
-            {
-                // $kind => default nilainya 'user'
-                $kind = $request->input('kind', 'user');
-
-                // kalo social id user ga ketemu atau ga match sama list data di db, dia berarti baru login pk gugel skarang
-                // create user pake Google account data mereka, ditambah yg field registrasi
+            } else {
+                // create user baru dari informasi user dr google
                 $newUser = User::create([
-                'namaLengkap' => $user->name,
-                'email' => $user->email,
-                'social_id' => $user->id,
-                'social_type' => 'google',  // loginnya pake google
-                'password' => bcrypt($user->token),  // Hash the token as the password
-
-                // Additional fields similar to your registerController
-                'tanggalLahir' => $request->input('tanggalLahir'),
-                'telepon' => $request->input('telepon'),
-                'kota' => $request->input('kota'),
-                'pekerjaan' => $request->input('pekerjaan'),
-                'kind' => $kind,  
+                    'namaLengkap' => $oauthUser->name,
+                    'email' => $oauthUser->email,
+                    'social_id'=> $oauthUser->id,
+                    'password' => bcrypt($oauthUser->token),
+                    // Additional fields similar to your registerController
+                    'tanggalLahir' => $request->input('tanggalLahir'),
+                    'telepon' => $request->input('telepon'),
+                    'kota' => $request->input('kota'),
+                    'pekerjaan' => $request->input('pekerjaan'),
+                    'kind' => $kind,  
                 ]);
 
-                // Log in the new user and return a JWT token
-                //$token = JWTAuth::fromUser($newUser);
-
+                // Log in user
                 Auth::login($newUser);
-
                 return redirect('/home');
             }
-
-        }
-        catch (Exception $e)
-        {
-            // return error
-            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
+
+
+
+
+                
