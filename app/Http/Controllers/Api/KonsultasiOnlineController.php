@@ -33,6 +33,15 @@ class KonsultasiOnlineController extends Controller
                 'provinsi' => 'nullable', 
                 // if perusahaan, namaPerusahaan required
                 'namaPerusahaan' => $request->input('jenisClient') == 'Perusahaan' ? 'required' : 'nullable',
+            ], [
+                // validator custom error messages
+                'nama.required' => 'Kolom Nama tidak boleh kosong',
+                'buktiTransaksi.required' => 'Wajib unggah Bukti Transaksi',
+                'pesanKonsultasi.required' => 'Kolom Pesan Konsultasi tidak boleh kosong',
+                'telepon.required' => 'Nomor Telepon tidak boleh kosong',
+                'email.required' => 'Kolom Email tidak boleh kosong',
+                'jenisClient.required' => 'Wajib mencantumkan Jenis Klien',
+                'namaPerusahaan.required' => 'Wajib mencantumkan Nama Perusahaan',
             ]);
 
             if($validator->fails()){
@@ -169,7 +178,7 @@ class KonsultasiOnlineController extends Controller
                 if($validator->fails()){
                     return response()->json([
                         'success' => false,
-                        'message'=> $validator->errors(),
+                        'message'=> 'Kolom Advokat tidak boleh kosong',
                     ], 422);
                 }
 

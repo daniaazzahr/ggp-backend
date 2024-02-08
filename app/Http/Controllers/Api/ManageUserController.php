@@ -19,7 +19,6 @@ class ManageUserController extends Controller
     public function getUsers(Request $request){
         // => page = 1, take = 10, orderBy = namaLengkap, order= desc, search= admin
         try {
-            // Your existing code here...
             // 1. ambil input dari http req
             $page = $request->query('page', 1);
             $take = $request->query('take', 10);
@@ -42,10 +41,10 @@ class ManageUserController extends Controller
         $users = $query->skip(($page - 1) * $take)->take($take)->get();
         
         // 6. count query
-        $total = User::count();
+        $totalUser = User::count();
 
         // 7. total Halaman
-        $totalHalaman = ceil($total / $take);
+        $totalHalaman = ceil($totalUser / $take);
 
         // 8. pagination next dan prev page
         $nextPage = $page < $totalHalaman;
@@ -54,6 +53,7 @@ class ManageUserController extends Controller
         // 9. return
         return response()->json([
         'success' => true,
+        'totalData' => $totalUser,
         'page' => $page,
         'take' => $take,
         'orderBy' => $orderBy,
@@ -89,7 +89,7 @@ class ManageUserController extends Controller
                 DB::commit();
                 return response()->json([
                     'success' => true,
-                    'message' => 'User ditemukan!',
+                    'message' => 'User berhasil ditemukan!',
                     'data' => $findUser
                 ], JsonResponse::HTTP_OK);
             }else{
@@ -129,6 +129,10 @@ class ManageUserController extends Controller
                 'kota' => 'nullable|string',
                 'pekerjaan' => 'nullable|string',
                 'password' => 'required|string',
+            ], [
+                // validator custom error messages
+                'namaLengkap.required' => 'Kolom Nama Lengkap tidak boleh kosong',
+                'password.required' => 'Kolom Password tidak boleh kosong',
             ]);
 
             if($validator->fails()){

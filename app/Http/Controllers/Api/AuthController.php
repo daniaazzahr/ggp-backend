@@ -30,10 +30,14 @@ class AuthController extends Controller
                 'pekerjaan' => 'nullable|string',
                 'password' => 'required|min:8',
                 'kind' => 'nullable|in:admin,user', // new col. role as admin atau user
+            ], [
+                // validator custom error messages
+                'namaLengkap.required' => 'Kolom Nama Lengkap tidak boleh kosong',
+                'email.required' => 'Kolom Email tidak boleh kosong',
+                'password.required' => 'Kolom Password tidak boleh kosong',
             ]);
 
             if ($validator->fails()) {
-                // Validation failed, return validation errors
                 return response()->json([
                     'success' => false,
                     'messages' => $validator->errors(),
@@ -87,6 +91,10 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'password' => 'required',
+        ], [
+            // validator custom error messages
+            'email.required' => 'Kolom Email tidak boleh kosong',
+            'password.required' => 'Kolom Password tidak boleh kosong',
         ]);
 
         // condition validation

@@ -24,6 +24,10 @@ class KlinikHukumController extends Controller
                 'pertanyaan' => 'required|string',
                 'kategori' => 'nullable',
                 'penulis' => 'required'
+            ], [
+                // validator custom error messages
+                'pertanyaan.required' => 'Kolom Pertanyaan tidak boleh kosong',
+                'penulis.required' => 'Wajib isi nama Anda',
             ]);
 
             if($validator->fails()){
@@ -93,7 +97,7 @@ class KlinikHukumController extends Controller
             if($validator->fails()){
                 return response()->json([
                     'success' => false,
-                    'message' => $validator->errors(),
+                    'message' => 'Kolom Jawaban tidak boleh kosong',
                 ], 422);
             }
 
@@ -117,7 +121,7 @@ class KlinikHukumController extends Controller
                 DB::commit();
                 return response()->json([
                     'success' => true,
-                    'message' => 'Jawaban telah dipost!',
+                    'message' => 'Jawaban telah di-post!',
                     'data' => $caripertanyaan
                 ], 201);
             } else{
@@ -226,7 +230,6 @@ class KlinikHukumController extends Controller
 
             // 2. initialize query
             $query = KlinikHukum::query();
-
             
             if($isAnswer == 'false'){
                 $query->where('isAnswer', false);
@@ -235,29 +238,23 @@ class KlinikHukumController extends Controller
             if($isAnswer == 'true'){
                 $query->where('isAnswer', true);
             }
-        
 
             // 3. filter search - apapun input user
             if($search !== null){
                 $query->where('pertanyaan', 'like', '%' . $search . '%');
-                
             }
 
             // 6. count query
-            $total = KlinikHukum::count();
+            $totalPertanyaan = $query->count();
 
             // 4. sort query
             $query->orderBy($orderBy, $order);
-
             
-
             // 5. pagination
             $data = $query->skip(($page - 1) * $take)->take($take)->get();
 
-           
-
             // 7. total pages
-            $totalPages = ceil($total/$take);
+            $totalPages = ceil($totalPertanyaan/$take);
 
             // 8. next dan prev page
             $nextPage = $page < $totalPages;
@@ -270,6 +267,7 @@ class KlinikHukumController extends Controller
             // 9. return 
             return response()->json([
                 'success' => true, 
+                'totalPertanyaan' => $totalPertanyaan,
                 'page' => $page,
                 'take' => $take,
                 'orderBy' => $orderBy,
