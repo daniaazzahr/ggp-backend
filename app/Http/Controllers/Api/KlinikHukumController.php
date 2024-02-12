@@ -21,7 +21,7 @@ class KlinikHukumController extends Controller
         try{
             // Validator, kategori not required
             $validator = Validator::make($request->all(),[
-                'pertanyaan' => 'required|string',
+                'pertanyaan' => 'required|max:5000',
                 'kategori' => 'nullable',
                 'penulis' => 'required'
             ], [
@@ -91,7 +91,7 @@ class KlinikHukumController extends Controller
         try{
             // Validator, isi field jawaban
             $validator = Validator::make($request->all(),[
-                'jawaban' => 'required|string'
+                'jawaban' => 'required|max:7000'
             ]);
 
             if($validator->fails()){

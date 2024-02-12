@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('telepon');
             $table->string('kategori')->nullable();
             $table->text('buktiTransaksi');
-            $table->string('pesanKonsultasi');
+            $table->string('pesanKonsultasi', 7000);
             $table->string('jenisClient');
             $table->string('namaPerusahaan')->nullable();
             $table->string('advokat')->nullable()->default('Belum ada Advokat');

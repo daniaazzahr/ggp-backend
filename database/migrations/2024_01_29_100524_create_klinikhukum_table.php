@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('klinikhukum', function (Blueprint $table) {
             $table->id();
-            $table->string('pertanyaan');
-            $table->string('jawaban')->default('');
+            $table->string('pertanyaan', 5000);
+            $table->string('jawaban', 7000)->default('');
             $table->string('kategori');
             $table->string('penulis');
             $table->string('penulisid')->nullable();
