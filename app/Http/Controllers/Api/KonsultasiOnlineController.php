@@ -75,7 +75,7 @@ class KonsultasiOnlineController extends Controller
                     'telepon' => $user->telepon,
                     'email' => $user->email,
                     'kota' => $user->kota,
-                    'kategori' => $user->kategori,
+                    'kategori' => $request->input('kategori'),
                     // ambil dari inputan
                     'alamat' => $request->input('alamat'),
                     'provinsi' => $request->input('provinsi'),
