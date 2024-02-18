@@ -331,8 +331,13 @@ class KonsultasiOnlineController extends Controller
                 $statusSlug = 'menunggu-advokat';
             }
 
-            // bikin url ketika filtering by status provided
-            $url = $statusSlug ? $request->fullUrlWithQuery(['status' => $statusSlug]) : $request->url();
+            // bikin url ketika filtering 
+            $url = $request->url(); // base url
+            $queryParameters = $request->query(); // query parameters
+            $queryParameters = array_filter($queryParameters); // 
+            if (!empty($queryParameters)) {
+                $url .= '?' . http_build_query($queryParameters); // kalo ada parameter yg diisi, append
+            }
 
             // 4. sort query
             $query->orderBy($orderBy, $order);
