@@ -154,6 +154,7 @@ class KonsultasiOnlineController extends Controller
                     'jenisClient' => $data->jenisClient,
                     'buktiTransaksi' => $data->buktiTransaksi,
                     'pesanKonsultasi' => $data->pesanKonsultasi,
+                    'advokat' => 'Belum Ada Advokat',
                     'status' => 'Pencarian Advokat'
                 ]);
 
@@ -316,13 +317,22 @@ class KonsultasiOnlineController extends Controller
             }
 
             // kondisi filtering per status
+
+            $statusSlug = null;
+            
             if ($status == 'Menunggu Verifikasi') {
                 $query = $queryMenungguVerif;
+                $statusSlug = 'menunggu-verifikasi';
             } elseif ($status == 'Pencarian Advokat') {
                 $query = $queryPencarianAdvokat;
+                $statusSlug = 'pencarian-advokat';
             } elseif ($status == 'Menunggu Advokat') {
                 $query = $queryMenungguAdvokat;
+                $statusSlug = 'menunggu-advokat';
             }
+
+            // bikin url ketika filtering by status provided
+            $url = $statusSlug ? $request->fullUrlWithQuery(['status' => $statusSlug]) : $request->url();
 
             // 4. sort query
             $query->orderBy($orderBy, $order);
@@ -373,6 +383,8 @@ class KonsultasiOnlineController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => $status,
+                'statusSlug' => $statusSlug,
+                'url' => $url,
                 'totalData' => $totalData,
                 'totalMenungguVerifikasi' => $totalMenungguVerifikasi,
                 'totalPencarianAdvokat' => $totalPencarianAdvokat,
