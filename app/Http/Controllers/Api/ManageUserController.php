@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\KlinikHukum;
+use App\Models\KonsultasiOnline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +18,7 @@ class ManageUserController extends Controller
     // CRUD USERS CONTROLLER
 
     // getUsers => get all users pake filter juga
-    public function getUsers(Request $request){
+    public function getUsers(Request $request) {
         // => page = 1, take = 10, orderBy = namaLengkap, order= desc, search= admin
         try {
             // 1. ambil input dari http req
@@ -76,7 +78,7 @@ class ManageUserController extends Controller
     }
 
     // getUser by ID 
-    public function getUser($id){
+    public function getUser($id) {
 
         // DB begin
         DB::beginTransaction();
@@ -219,6 +221,32 @@ class ManageUserController extends Controller
                 'messages' => $e->getMessage(),
                 'data' => null,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        
+    }
+
+    // dashboardUser => user/dashboard
+    public function dashboardUser() {
+        // cek user logged in
+        $user = Auth::guard('api')->user();
+
+        // ambil pertanyaan dari klinik hukum
+        $klinikHukum = KlinikHukum::where('penulisid', $user->id)->get();
+
+        // ambil konsultasi dari konsultasi online
+        $konsultasiOnline = KonsultasiOnline::where('namaid', $user->id)->get();
+        if($user){
+            return response()->json([
+                'status' => true,
+                'message' => 'Selamat datang di Dashboard User!',
+                'pertanyaan' =>  $klinikHukum,
+                'konsultasi' => $konsultasiOnline
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'User belum login!',
+            ], 401);
         }
         
     }

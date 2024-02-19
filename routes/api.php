@@ -45,10 +45,10 @@ Route::group(['middleware' => ['auth.jwt']],function (){
 Route::get('/users', [ManageUserController::class, 'getUsers']);
 Route::get('/user/{id}', [ManageUserController::class, 'getUser']);
 Route::middleware(['auth:api'])->group(function () {
-
-
     Route::put('/user/{id}', [ManageUserController::class, 'editUser']);
     Route::delete('/user/{id}', [ManageUserController::class, 'deleteUser']);
+    // untuk dashboard user
+    Route::get('/pengguna/dashboard', [ManageUserController::class, 'dashboardUser']);
 });
 
 

@@ -92,12 +92,14 @@ class KlinikHukumController extends Controller
             // Validator, isi field jawaban
             $validator = Validator::make($request->all(),[
                 'jawaban' => 'required|max:7000'
+            ],[
+                'jawaban.required' => 'Kolom Jawaban tidak boleh kosong'
             ]);
 
             if($validator->fails()){
                 return response()->json([
                     'success' => false,
-                    'message' => 'Kolom Jawaban tidak boleh kosong',
+                    'message' => $validator->errors(),
                 ], 422);
             }
 
