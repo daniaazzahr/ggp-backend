@@ -317,26 +317,16 @@ class KonsultasiOnlineController extends Controller
             }
 
             // kondisi filtering per status
-
-            $statusSlug = null;
             
-            if ($status == 'Menunggu Verifikasi') {
+            if ($status == 'menunggu-verifikasi') {
                 $query = $queryMenungguVerif;
-                $statusSlug = 'menunggu-verifikasi';
-            } elseif ($status == 'Pencarian Advokat') {
-                $query = $queryPencarianAdvokat;
-                $statusSlug = 'pencarian-advokat';
-            } elseif ($status == 'Menunggu Advokat') {
-                $query = $queryMenungguAdvokat;
-                $statusSlug = 'menunggu-advokat';
-            }
 
-            // bikin url ketika filtering 
-            $url = $request->url(); // base url
-            $queryParameters = $request->query(); // query parameters
-            $queryParameters = array_filter($queryParameters); // 
-            if (!empty($queryParameters)) {
-                $url .= '?' . http_build_query($queryParameters); // kalo ada parameter yg diisi, append
+            } elseif ($status == 'pencarian-advokat') {
+                $query = $queryPencarianAdvokat;
+
+            } elseif ($status == 'menunggu-advokat') {
+                $query = $queryMenungguAdvokat;
+
             }
 
             // 4. sort query
@@ -351,8 +341,6 @@ class KonsultasiOnlineController extends Controller
             $data = $query->skip(($page - 1) * $take)->take($take)->get();
             // pagination buat per status
             // $dataMenungguVerifikasi = $queryMenungguVerif->skip(($page - 1) * $take)->take($take)->get();
-            // $dataPencarianAdvokat = $queryPencarianAdvokat->skip(($page - 1) * $take)->take($take)->get();
-            // $dataMenungguAdvokat = $queryMenungguAdvokat->skip(($page - 1) * $take)->take($take)->get();
 
             // 6. count query
             $totalData = KonsultasiOnline::count();
@@ -365,8 +353,6 @@ class KonsultasiOnlineController extends Controller
             $totalPages = ceil($totalData/$take);
             // total pages per status
             // $pagesMenungguVerifikasi = ceil($totalMenungguVerifikasi/$take);
-            // $pagesPencarianAdvokat = ceil($totalPencarianAdvokat/$take);
-            // $pagesMenungguAdvokat = ceil($totalMenungguAdvokat/$take);
             
             // 8. next dan prev page
             $nextPage = $page < $totalPages;
@@ -374,10 +360,6 @@ class KonsultasiOnlineController extends Controller
             // next dan prev page per status
             // $nextPageMenungguVerif = $page < $pagesMenungguVerifikasi;
             // $prevPageMenungguVerif = $page > 1;
-            // $nextPagePencarianAdvokat = $page < $pagesPencarianAdvokat;
-            // $prevPagePencarianAdvokat = $page > 1;
-            // $nextPageMenungguAdvokat = $page < $pagesMenungguAdvokat;
-            // $prevPageMenungguAdvokat = $page > 1;
 
             // 9. default ke page 1 ketika search
             if($search){
@@ -388,8 +370,6 @@ class KonsultasiOnlineController extends Controller
             return response()->json([
                 'success' => true,
                 'status' => $status,
-                'statusSlug' => $statusSlug,
-                'url' => $url,
                 'totalData' => $totalData,
                 'totalMenungguVerifikasi' => $totalMenungguVerifikasi,
                 'totalPencarianAdvokat' => $totalPencarianAdvokat,
@@ -401,20 +381,14 @@ class KonsultasiOnlineController extends Controller
                 'search' => $search,
                 'totalPages' => $totalPages,
                 // 'totalPagesMenungguVerif' => $pagesMenungguVerifikasi,
-                // 'totalPagesPencarianAdvokat' => $pagesPencarianAdvokat,
-                // 'totalPagesMenungguAdvokat' => $pagesMenungguAdvokat,
+
                 'nextPage' => $nextPage,
                 'prevPage' => $prevPage,
                 // 'nextPageMenungguVerifikasi' => $nextPageMenungguVerif,
                 // 'prevPageMenungguVerifikasi' => $prevPageMenungguVerif,
-                // 'nextPagePencarianAdvokat' => $nextPagePencarianAdvokat,
-                // 'prevPagePencarianAdvokat' => $prevPagePencarianAdvokat,
-                // 'nextPageMenungguAdvokat' => $nextPageMenungguAdvokat,
-                // 'prevPageMenungguAdvokat' => $prevPageMenungguAdvokat,
                 'data' => $data,   
                 // 'dataMenungguVerifikasi' => $dataMenungguVerifikasi,
-                // 'dataPencarianAdvokat' => $dataPencarianAdvokat,
-                // 'dataMenungguAdvokat' => $dataMenungguAdvokat,             
+          
             ], 200);
         } catch (Exception $e){
             return response()->json([
