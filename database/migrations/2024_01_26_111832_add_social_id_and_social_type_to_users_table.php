@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->string('social_id')->nullable();    // add social_id column with varchar type
+            $table->string('social_id')->nullable();    // google_id
             $table->string('social_type')->nullable();  // add social_type column with varchar type
         });
     }

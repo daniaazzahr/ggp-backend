@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('telepon')->nullable();
             $table->string('kota')->nullable();
             $table->string('pekerjaan')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

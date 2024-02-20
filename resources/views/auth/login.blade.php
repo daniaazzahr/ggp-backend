@@ -43,5 +43,15 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        <!-- sign in with google -->
+        <div class="flex items-center justify-end mt-4">
+            <a href="{{ route('google-auth') }}"> 
+
+            <span class="ml-3">
+                Google
+            </span>
+
+            </a>
+        </div>
     </form>
 </x-guest-layout>

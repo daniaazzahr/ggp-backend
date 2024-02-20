@@ -32,11 +32,11 @@ Route::middleware('auth:api')->get('/user', function(Request $request){
     return $request->user();
 });
 Route::post('/logout', [AuthController::class, 'logoutUser']);
-Route::group(['middleware' => ['auth.jwt']],function (){
-    // sign in gugel, ini harus pake middleware atau gausah, nanti liat hasilnya
-    Route::get('auth', [GoogleController::class, 'redirectToGoogle']);
-    Route::get('auth/callback', [GoogleController::class, 'handleCallback']);
-});
+
+// route sign in with google
+Route::get('auth/google', [SignInGoogleController::class, 'redirect'])->name('google-auth');
+Route::get('auth/google/call-back', [SignInGoogleController::class, 'googleCallback']);
+
 
 
 // ========================== USERS CRUD ROUTES ==================================

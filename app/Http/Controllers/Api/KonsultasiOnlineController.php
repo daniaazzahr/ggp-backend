@@ -72,7 +72,7 @@ class KonsultasiOnlineController extends Controller
                     // ambil dari database
                     'nama' => $user->namaLengkap,
                     'namaid' => $user->id,
-                    'telepon' => $user->telepon,
+                    'telepon' => $user->telepon ? $user->telepon : $request->input('telepon'),
                     'email' => $user->email,
                     'kota' => $user->kota,
                     'kategori' => $request->input('kategori'),
@@ -154,7 +154,7 @@ class KonsultasiOnlineController extends Controller
                     'jenisClient' => $data->jenisClient,
                     'buktiTransaksi' => $data->buktiTransaksi,
                     'pesanKonsultasi' => $data->pesanKonsultasi,
-                    'advokat' => 'Belum Ada Advokat',
+                    'advokat' => 'Belum ada Advokat',
                     'status' => 'Pencarian Advokat'
                 ]);
 
