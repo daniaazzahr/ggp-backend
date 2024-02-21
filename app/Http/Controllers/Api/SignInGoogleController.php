@@ -12,7 +12,7 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class SignInGoogleController extends Controller
 {
-    // redirect
+    // redirect google
     public function redirect(){
         return Socialite::driver('google')->redirect();
     }
