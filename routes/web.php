@@ -29,8 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// route sign in with google
-Route::get('auth/google', [SignInGoogleController::class, 'redirect'])->name('google-auth');
-Route::get('auth/google/call-back', [SignInGoogleController::class, 'googleCallback']);
+//route sign in with google
+// Route::get('auth/google', [SignInGoogleController::class, 'redirect'])->name('google-auth');
+// Route::get('auth/google/call-back', [SignInGoogleController::class, 'googleCallback']);
 
 require __DIR__.'/auth.php';

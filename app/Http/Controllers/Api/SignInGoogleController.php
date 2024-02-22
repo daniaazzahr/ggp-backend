@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -14,12 +16,14 @@ class SignInGoogleController extends Controller
 {
     // redirect google
     public function redirect(){
+        Session::flush();
         return Socialite::driver('google')->redirect();
     }
 
     // callback
     public function googleCallback(Request $request){
         try{
+            Log::info('Callback request:', $request->all());
             // minta socialite tolong ambil data user
             $google_user = Socialite::driver('google')->user();
 
@@ -50,6 +54,8 @@ class SignInGoogleController extends Controller
                     'data' => $new_user
                 ], 201);
 
+               
+
             } else {
                 // user exists di db, login user
                 Auth::login($user);
@@ -63,6 +69,7 @@ class SignInGoogleController extends Controller
                     'message' => 'Selamat Datang di Dashboard!',
                     'data' => $user
                 ], 200);
+                
             }            
 
         } catch (Exception $e){

@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\KlinikHukumController;
-use App\Http\Controllers\Api\KonsultasiOnlineController;
-use App\Http\Controllers\Api\ManageUserController;
-use App\Models\KonsultasiOnline;
 use Illuminate\Http\Request;
+use App\Models\KonsultasiOnline;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ManageUserController;
+use App\Http\Controllers\Api\KlinikHukumController;
+use App\Http\Controllers\Api\SignInGoogleController;
+use App\Http\Controllers\Api\KonsultasiOnlineController;
 
 /*
 |--------------------------------------------------------------------------
