@@ -125,17 +125,18 @@ class ManageUserController extends Controller
             // validate data => namaLengkap & email required
             $validator = Validator::make($request->all(), [
                 
-                'namaLengkap' => 'required|string|max:191',
                 'tanggalLahir' => 'nullable|date',
                 'telepon' => 'nullable|string',
                 'kota' => 'nullable|string',
                 'pekerjaan' => 'nullable|string',
-                'password' => 'required|string',
-            ], [
-                // validator custom error messages
-                'namaLengkap.required' => 'Kolom Nama Lengkap tidak boleh kosong',
-                'password.required' => 'Kolom Password tidak boleh kosong',
-            ]);
+            //    'password' => 'nullable|string',
+            ], 
+            // [
+            //     // validator custom error messages
+            //     'namaLengkap.required' => 'Kolom Nama Lengkap tidak boleh kosong',
+            //     'password.required' => 'Kolom Password tidak boleh kosong',
+            // ]
+            );
 
             if($validator->fails()){
                 return response()->json([
@@ -155,12 +156,13 @@ class ManageUserController extends Controller
             }
             
             $cariuser->update([
-                'namaLengkap' => $request->input('namaLengkap'),
-                'tanggalLahir' => $request->input('tanggalLahir'),
-                'telepon' => $request->input('telepon'),
-                'kota' => $request->input('kota'),
-                'pekerjaan' => $request->input('pekerjaan'),
-                'password' => bcrypt($request->input('password')),
+                                
+                'tanggalLahir' => $request->filled('tanggalLahir') ? $request->input('tanggalLahir') : $cariuser->tanggalLahir,
+                'telepon' => $request->filled('telepon') ? $request->input('telepon') : $cariuser->telepon,
+                'kota' => $request->filled('kota') ? $request->input('kota') : $cariuser->kota,
+                'pekerjaan' => $request->filled('pekerjaan') ? $request->input('pekerjaan') : $cariuser->pekerjaan,
+               
+                //'password' => bcrypt($request->input('password')),
             ]);
     
             // kalau udah ok semua, db commit

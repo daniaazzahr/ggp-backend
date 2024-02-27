@@ -37,6 +37,7 @@ Route::post('/logout', [AuthController::class, 'logoutUser']);
 // route sign in with google
 Route::get('auth/google', [SignInGoogleController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/call-back', [SignInGoogleController::class, 'googleCallback']);
+//Route::get('auth/google/call-back', [SignInGoogleController::class, 'cobaCallback']);
 
 
 
@@ -46,7 +47,7 @@ Route::get('auth/google/call-back', [SignInGoogleController::class, 'googleCallb
 Route::get('/users', [ManageUserController::class, 'getUsers']);
 Route::get('/user/{id}', [ManageUserController::class, 'getUser']);
 Route::middleware(['auth:api'])->group(function () {
-    Route::put('/user/{id}', [ManageUserController::class, 'editUser']);
+    Route::post('/user/{id}', [ManageUserController::class, 'editUser']);
     Route::delete('/user/{id}', [ManageUserController::class, 'deleteUser']);
     // untuk dashboard user
     Route::get('/pengguna/dashboard', [ManageUserController::class, 'dashboardUser']);
