@@ -20,13 +20,16 @@ class SignInGoogleController extends Controller
     public function redirect(){
         //original 
 
-        Session::flush();
-        return Socialite::driver('google')->redirect();
+        // Session::flush();
+        // return Socialite::driver('google')->redirect();
 
         // tutor yang react
-        // return response()->json([
-        //     'url' => Socialite::driver('google')->redirect()->getTargetUrl()
-        // ]);
+         return response()->json([
+             'url' => Socialite::driver('google')
+                    ->stateless()
+                    ->redirect()
+                    ->getTargetUrl()
+         ]);
     }
 
 
@@ -34,7 +37,7 @@ class SignInGoogleController extends Controller
     public function googleCallback( Request $request ){
         try {
             // minta socialite tolong ambil data user
-            $google_user = Socialite::driver('google')->user();
+            $google_user = Socialite::driver('google')->stateless()->user();
     
             // cek user emailnya udah ada didatabase apa belum
             $user = User::where('email', $google_user->getEmail())->first();
