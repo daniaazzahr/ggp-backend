@@ -7,76 +7,55 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
+
 class SignInGoogleController extends Controller
 {
     // redirect google
     public function redirect(){
-        Session::flush();
-        return Socialite::driver('google')->redirect();
+        return response()->json([
+            'url' => Socialite::driver('google')
+                ->stateless()
+                ->redirect()
+                ->getTargetUrl(),
+        ]);
     }
 
     // callback
     public function googleCallback(Request $request){
-        try{
-            Log::info('Callback request:', $request->all());
-            // minta socialite tolong ambil data user
-            $google_user = Socialite::driver('google')->user();
-
-            // cek user udah punya google id apa belum
-            $user = User::where('social_id', $google_user->getId())->first();
-
-            // kondisi kalau user belum ada di db atau !$user, artinya idnya ga match
-            if(!$user){
-                // create gugle user
-                $new_user = User::create([
-                    'namaLengkap' => $google_user->getName(),
-                    'email' => $google_user->getEmail(),
-                    // associate user ke google, store google id
-                    'social_id' => $google_user->getId(),
-                ]);
-
-                // login user
-                Auth::login($new_user);
-
-                // generate token jwt
-                $tokenBaru = JWTAuth::fromUser($new_user);
-
-                // redirect user ke dashboard
-                return response()->json([
-                    'success' => true,
-                    'token' => $tokenBaru,
-                    'message' => 'Selamat Datang di Dashboard!',
-                    'data' => $new_user
-                ], 201);
-
-               
-
-            } else {
-                // user exists di db, login user
-                Auth::login($user);
-
-                $tokenUser = JWTAuth::fromUser($user);
-
-                // redirect user ke dashboard
-                return response()->json([
-                    'success' => true,
-                    'token' => $tokenUser,
-                    'message' => 'Selamat Datang di Dashboard!',
-                    'data' => $user
-                ], 200);
-                
-            }            
-
-        } catch (Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 422);
+        try {
+            /** @var SocialiteUser $socialiteUser */
+            $socialiteUser = Socialite::driver('google')->stateless()->user();
+        } catch (ClientException $e) {
+            return response()->json(['error' => 'Invalid credentials provided.'], 422);
         }
+
+        /** @var User $user */
+        $user = User::query()
+            ->firstOrCreate(
+                [
+                    'email' => $socialiteUser->getEmail(),
+                ],
+                [
+                    'email_verified_at' => now(),
+                    'namaLengkap' => $socialiteUser->getName(),
+                    'social_id' => $socialiteUser->getId(),
+                ]
+            );
+
+        Auth::login($user);
+        $tokenUser = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'user' => $user,
+            'access_token' => $tokenUser,
+            'token_type' => 'Bearer',
+        ]);
+
     }
 }
