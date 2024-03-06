@@ -26,7 +26,7 @@ class KonsultasiOnlineController extends Controller
                 'buktiTransaksi' => 'required|image|mimes:jpeg,png,jpg',
                 'pesanKonsultasi' => 'required|max:7000',
                 'telepon'=> 'required',
-                'email' => 'required',
+                'email' => 'required|email',
                 'jenisClient' => 'required',
                 'kota' => 'nullable', 
                 'alamat' => 'nullable', 
@@ -48,7 +48,7 @@ class KonsultasiOnlineController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => $validator->errors()
-                ], 401);
+                ], 422);
             }
 
             // cek stored file image buktiTransaksi

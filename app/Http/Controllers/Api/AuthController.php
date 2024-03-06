@@ -89,7 +89,7 @@ class AuthController extends Controller
 
         // validate
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'email' => 'required|email',
             'password' => 'required',
         ], [
             // validator custom error messages

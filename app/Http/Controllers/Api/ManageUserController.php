@@ -33,7 +33,14 @@ class ManageUserController extends Controller
 
         // 3. filter search
         if($search){
-            $query->where('namaLengkap', 'like', '%' . $search . '%');
+            $query->where(function($query) use ($search) {
+                $query->where('namaLengkap', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('tanggalLahir', 'like', '%' . $search . '%')
+                    ->orWhere('pekerjaan', 'like', '%' . $search . '%')
+                    ->orWhere('kota', 'like', '%' . $search . '%')
+                    ->orWhere('telepon', 'like', '%' . $search . '%');
+            });
         }
 
         // 4. sortir query
