@@ -8,6 +8,9 @@ use App\Http\Controllers\Api\ManageUserController;
 use App\Http\Controllers\Api\KlinikHukumController;
 use App\Http\Controllers\Api\SignInGoogleController;
 use App\Http\Controllers\Api\KonsultasiOnlineController;
+use App\Http\Controllers\Api\ManagePictures;
+use App\Http\Controllers\Api\PictureController;
+use App\Models\ManagePicture;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +78,15 @@ Route::get('consultation/{id}', [KonsultasiOnlineController::class, 'getConsulta
 Route::get('consultations', [KonsultasiOnlineController::class, 'getConsultations']);
 
 
+// ======================== UPLOAD GAMBAR ===========================
+Route::group(['middleware' => 'auth:api'], function () {
 
+    Route::post('/upload-img', [PictureController::class, 'upload']);
+    Route::delete('/delete-img/{id}', [PictureController::class, 'deletePicture']);
+    
+});  
+
+Route::get('/img', [PictureController::class, 'getPictures']);
+Route::get('/img/{id}', [PictureController::class, 'getPicture']);
 
 
